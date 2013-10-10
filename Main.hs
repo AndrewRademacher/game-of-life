@@ -3,14 +3,15 @@
 {-# LANGUAGE TypeOperators #-}
 
 import           Prelude                                as P
+import           System.Random
 import           System.Console.CmdArgs
 import           Data.Text                              as T
 import           Data.Text.IO                           as TIO
-import           Data.Array.Repa                        as R
-import           Data.Array.Repa.Algorithms.Randomish   as AR
+import           Data.List                              as L
+import           Data.Vector                            as V
+import           Data.Vector.Unboxed                    as U
 import           Graphics.Gloss
 
-type Board = Array U DIM2 Int
 data Life = Life { width     :: Int
                  , height    :: Int
                  , cellWidth :: Int
@@ -25,12 +26,19 @@ argsLife = Life { width         = 50  &= help "The number of cells across the ga
 main :: IO ()
 main = do
         life <- cmdArgs argsLife
-        let board         = randomishIntArray (Z :. (width life) :. (height life)) 0 1 1
+        seed <- newStdGen
+        let board = randomBoard (width life) (height life) seed
             displayWidth  = (cellWidth life) * (width life)
             displayHeight = (cellWidth life) * (height life)
-        display (InWindow "Game of Life" (displayWidth, displayHeight) (10, 10))
-                white (pictureBoard life board)
+        P.print life
+        P.print board
+--        display (InWindow "Game of Life" (displayWidth, displayHeight) (10, 10))
+--                white (pictureBoard life)
 
-pictureBoard :: Life -> Board -> Picture
-pictureBoard life board = Scale 20 20
-                        $ Polygon [(0, 0), (0, 1), (1, 1), (1, 0)]
+randomBoard :: Int -> Int -> StdGen -> U.Vector Int
+randomBoard w h gen = U.fromList (P.map (`mod` 2) (randomList (w * h) gen))
+    where randomList n = L.take n . L.unfoldr (Just . random)
+
+pictureBoard :: Life -> Picture
+pictureBoard life = Scale 20 20
+                  $ Polygon [(0, 0), (0, 1), (1, 1), (1, 0)]
