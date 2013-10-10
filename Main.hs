@@ -29,7 +29,8 @@ main = do
             displayWidth  = (cellWidth life) * (width life)
             displayHeight = (cellWidth life) * (height life)
         display (InWindow "Game of Life" (displayWidth, displayHeight) (10, 10))
-                white (picture life board)
+                white (pictureBoard life board)
 
-picture :: Life -> Board -> Picture
-picture = undefined
+pictureBoard :: Life -> Board -> Picture
+pictureBoard life board = Scale 20 20
+                        $ Polygon [(0, 0), (0, 1), (1, 1), (1, 0)]
