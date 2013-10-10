@@ -36,8 +36,7 @@ main = do
 --                white (pictureBoard life)
 
 randomBoard :: Int -> Int -> StdGen -> U.Vector Int
-randomBoard w h gen = U.fromList (P.map (`mod` 2) (randomList (w * h) gen))
-    where randomList n = L.take n . L.unfoldr (Just . random)
+randomBoard w h = U.take (w * h) . U.unfoldr (Just . randomR (0, 1))
 
 pictureBoard :: Life -> Picture
 pictureBoard life = Scale 20 20
