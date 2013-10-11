@@ -68,9 +68,9 @@ pictureGeneration gen   = Translate tx ty
 pictureCell :: Generation -> Int -> Int -> Picture
 pictureCell gen idx state  = Translate (fromIntegral x :: Float) (fromIntegral y :: Float)
                             $ Color (color state)
-                            $ Polygon [(0, 0), (0, 1), (1, 1), (1, 0)]
+                            $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]
     where (x, y)  = getCoords gen idx
-          color 0 = makeColor 1 1 1 1
+          color 0 = makeColor 0.9 0.9 0.9 1
           color 1 = makeColor 0 0 0 1
 
 nextGeneration :: ViewPort -> Float -> Generation -> Generation
