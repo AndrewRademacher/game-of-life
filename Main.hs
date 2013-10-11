@@ -74,4 +74,21 @@ pictureCell gen idx state  = Translate (fromIntegral x :: Float) (fromIntegral y
           color 1 = makeColor 0 0 0 1
 
 nextGeneration :: ViewPort -> Float -> Generation -> Generation
-nextGeneration view time lastGen = lastGen
+nextGeneration view time gen@(Generation w h cw gps board) = 
+        Generation w h cw gps (V.imap (nextCell gen) board)
+
+nextCell :: Generation -> Int -> Int -> Int
+nextCell gen idx state | nc < 2 || nc > 3   = 0
+                       | nc == 3            = 1
+                       | otherwise          = state
+    where (x, y)        = getCoords gen idx
+          nc            = L.sum [ (gn neg neg) , (gn zro neg)   , (gn pos neg)
+                                , (gn neg zro) , (0)            , (gn pos zro)
+                                , (gn neg pos) , (gn zro pos)   , (gn pos pos) ]
+          gn mx my      | midx < 0                          = 0
+                        | midx >= (V.length (board gen))    = 0
+                        | otherwise                         = (board gen) V.! midx
+                where midx = fromCoords gen (x + mx, y + my)
+          neg           = (-1)
+          pos           = (1)
+          zro           = (0)
