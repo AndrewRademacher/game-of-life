@@ -15,8 +15,9 @@ module Life
 import           System.Random
 import           Data.List                          as L
 import           Data.Vector                        as V
+import           Data.Vector.Unboxed                as U
 
-type Board = V.Vector Int
+type Board = U.Vector Int
 data Generation = Generation { width     :: Int
                              , height    :: Int
                              , cellWidth :: Float
@@ -24,7 +25,7 @@ data Generation = Generation { width     :: Int
                              , board     :: Board }
 
 randomBoard :: Int -> Int -> StdGen -> Board
-randomBoard w h = V.take (w * h) . V.unfoldr (Just . randomR (0, 1))
+randomBoard w h = U.take (w * h) . U.unfoldr (Just . randomR (0, 1))
 
 getCoords :: Generation -> Int -> (Int, Int)
 getCoords !gen !idx = (x, y)
@@ -35,11 +36,11 @@ fromCoords :: Generation -> (Int, Int) -> Int
 fromCoords !gen (!x, !y) = x + (y * (width gen))
 
 countAlive :: Generation -> Int
-countAlive (Generation _ _ _ _ bord) = V.sum bord
+countAlive (Generation _ _ _ _ bord) = U.sum bord
 
 nextGeneration :: Generation -> Generation
 nextGeneration gen@(Generation w h cw gps bord) = 
-        Generation w h cw gps (V.imap (nextCell gen) bord)
+        Generation w h cw gps (U.imap (nextCell gen) bord)
 
 nextCell :: Generation -> Int -> Int -> Int
 nextCell gen idx state | nc < 2 || nc > 3   = 0
@@ -50,8 +51,8 @@ nextCell gen idx state | nc < 2 || nc > 3   = 0
                                 + (gn neg zro) + (0)            + (gn pos zro)
                                 + (gn neg pos) + (gn zro pos)   + (gn pos pos)  
           gn !mx !my    | midx < 0                          = 0
-                        | midx >= (V.length (board gen))    = 0
-                        | otherwise                         = (board gen) V.! midx
+                        | midx >= (U.length (board gen))    = 0
+                        | otherwise                         = (board gen) U.! midx
                 where !midx = fromCoords gen (x + mx, y + my)
           neg           = (-1)
           pos           = (1)

@@ -9,6 +9,7 @@ import           System.Console.CmdArgs
 import           Data.Text                              ()
 import           Data.Text.IO                           ()
 import           Data.Vector                            as V
+import           Data.Vector.Generic                    as G
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 
@@ -44,7 +45,7 @@ makeNextGen _ _ gen = nextGeneration gen
 pictureGeneration :: Generation -> Picture
 pictureGeneration gen   = Translate tx ty
                         $ Scale (cellWidth gen) (cellWidth gen)
-                        $ Pictures (V.toList (V.imap (pictureCell gen) (board gen)))
+                        $ Pictures (V.toList (V.imap (pictureCell gen) (G.convert (board gen) :: V.Vector Int)))
     where tx = 0 - (((cellWidth gen) * w) / 2)
           ty = 0 - (((cellWidth gen) * h) / 2)
           w  = (fromIntegral (width gen) :: Float)
