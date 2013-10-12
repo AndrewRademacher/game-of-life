@@ -5,11 +5,11 @@
 import           Prelude                                as P
 import           System.Random
 import           System.Console.CmdArgs
-import           Data.Text                              as T
-import           Data.Text.IO                           as TIO
+import           Data.Text                              ()
+import           Data.Text.IO                           ()
 import           Data.List                              as L
 import           Data.Vector                            as V
-import           Data.Vector.Unboxed                    as U
+import           Data.Vector.Unboxed                    ()
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 
@@ -19,6 +19,7 @@ data Life = Life { width_     :: Int
                  , genPerSec_ :: Int }
             deriving (Show, Data, Typeable)
 
+argsLife :: Life
 argsLife = Life { width_         = 50  &= help "The number of cells across the game board."
                 , height_        = 50  &= help "The number of cells tall."
                 , cellWidth_     = 10  &= help "The number of pixels across a single cell."
@@ -67,15 +68,16 @@ pictureGeneration gen   = Translate tx ty
 
 pictureCell :: Generation -> Int -> Int -> Picture
 pictureCell gen idx state  = Translate (fromIntegral x :: Float) (fromIntegral y :: Float)
-                            $ Color (color state)
+                            $ Color (stateColor state)
                             $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]
     where (x, y)  = getCoords gen idx
-          color 0 = makeColor 0.9 0.9 0.9 1
-          color 1 = makeColor 0 0 0 1
+          stateColor 0 = makeColor 0.9 0.9 0.9 1
+          stateColor 1 = makeColor 0 0 0 1
+          stateColor _ = makeColor 0 0 0 0
 
 nextGeneration :: ViewPort -> Float -> Generation -> Generation
-nextGeneration view time gen@(Generation w h cw gps board) = 
-        Generation w h cw gps (V.imap (nextCell gen) board)
+nextGeneration _ _ gen@(Generation w h cw gps bord) = 
+        Generation w h cw gps (V.imap (nextCell gen) bord)
 
 nextCell :: Generation -> Int -> Int -> Int
 nextCell gen idx state | nc < 2 || nc > 3   = 0
