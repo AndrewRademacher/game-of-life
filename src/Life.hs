@@ -13,8 +13,6 @@ module Life
     ) where
 
 import           System.Random
-import           Data.List                          as L
-import           Data.Vector                        as V
 import           Data.Vector.Unboxed                as U
 
 type Board = U.Vector Int
