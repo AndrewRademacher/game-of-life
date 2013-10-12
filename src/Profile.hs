@@ -17,9 +17,9 @@ data Profile = Profile { width_       :: Int
 
 argsProfile :: Profile
 argsProfile = Profile
-                { width_        =  50  &= help "The number of cells across the game board."
-                , height_       =  50  &= help "The number of cells tall."
-                , generations_  =  100 &= help "The number of generations to calculate." }
+                { width_        =  100  &= help "The number of cells across the game board."
+                , height_       =  100  &= help "The number of cells tall."
+                , generations_  =  200  &= help "The number of generations to calculate." }
 
 main :: IO ()
 main = do
