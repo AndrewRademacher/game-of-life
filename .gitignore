@@ -3,6 +3,6 @@ bin/
 *.swp
 *.hi
 *.o
-*.prof
+*.prof*
 src/Profile
 src/Main

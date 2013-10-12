@@ -45,9 +45,9 @@ nextCell gen idx state | nc < 2 || nc > 3   = 0
                        | nc == 3            = 1
                        | otherwise          = state
     where (x, y)        = getCoords gen idx
-          nc            = L.sum [ (gn neg neg) , (gn zro neg)   , (gn pos neg)
-                                , (gn neg zro) , (0)            , (gn pos zro)
-                                , (gn neg pos) , (gn zro pos)   , (gn pos pos) ]
+          nc            =         (gn neg neg) + (gn zro neg)   + (gn pos neg)
+                                + (gn neg zro) + (0)            + (gn pos zro)
+                                + (gn neg pos) + (gn zro pos)   + (gn pos pos)  
           gn mx my      | midx < 0                          = 0
                         | midx >= (V.length (board gen))    = 0
                         | otherwise                         = (board gen) V.! midx
