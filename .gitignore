@@ -3,3 +3,5 @@ bin/
 *.swp
 *.hi
 *.o
+src/Profile
+src/Main
