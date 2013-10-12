@@ -6,6 +6,7 @@ module Life
     , randomBoard
     , getCoords
     , fromCoords
+    , countAlive
     , nextGeneration
     , nextCell
     ) where
@@ -32,6 +33,8 @@ getCoords gen idx = (x, y)
 fromCoords :: Generation -> (Int, Int) -> Int
 fromCoords gen (x, y) = x + (y * (width gen))
 
+countAlive :: Generation -> Int
+countAlive (Generation _ _ _ _ bord) = V.sum bord
 
 nextGeneration :: Generation -> Generation
 nextGeneration gen@(Generation w h cw gps bord) = 

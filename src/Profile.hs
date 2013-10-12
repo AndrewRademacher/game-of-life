@@ -34,4 +34,5 @@ makeFirstGen (Profile w h g) seed =
         Generation w h 1 1 (randomBoard w h seed)
 
 simulate :: Int -> Generation -> Int
-simulate genCount currGen = undefined
+simulate 0 gen = countAlive gen
+simulate i gen = simulate (i - 1) (nextGeneration gen)
