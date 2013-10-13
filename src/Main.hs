@@ -3,13 +3,13 @@
 {-# LANGUAGE TypeOperators #-}
 
 import           Prelude                                as P
+import           Life
 import           System.Random
 import           System.Console.CmdArgs
 import           Data.Text                              ()
 import           Data.Text.IO                           ()
-import           Data.List                              as L
 import           Data.Vector                            as V
-import           Data.Vector.Unboxed                    ()
+import           Data.Vector.Generic                    as G
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 
@@ -25,13 +25,6 @@ argsLife = Life { width_         = 50  &= help "The number of cells across the g
                 , cellWidth_     = 10  &= help "The number of pixels across a single cell."
                 , genPerSec_     = 1   &= help "The number of generations per second." }
 
-type Board = V.Vector Int
-data Generation = Generation { width     :: Int
-                             , height    :: Int
-                             , cellWidth :: Float
-                             , genPerSec :: Int
-                             , board     :: Board }
-
 main :: IO ()
 main = do
         life <- cmdArgs argsLife
@@ -40,27 +33,19 @@ main = do
             displayWidth  = (cellWidth_ life) * (width_ life)
             displayHeight = (cellWidth_ life) * (height_ life)
         simulate (InWindow "Game of Life" (displayWidth, displayHeight) (10, 10))
-            white (genPerSec firstGen) firstGen pictureGeneration nextGeneration
+            white (genPerSec firstGen) firstGen pictureGeneration makeNextGen
 
 makeFirstGen :: Life -> StdGen -> Generation
 makeFirstGen (Life w h cw gps) seed = 
         Generation w h (fromIntegral cw :: Float) gps (randomBoard w h seed)
 
-randomBoard :: Int -> Int -> StdGen -> Board
-randomBoard w h = V.take (w * h) . V.unfoldr (Just . randomR (0, 1))
-
-getCoords :: Generation -> Int -> (Int, Int)
-getCoords gen idx = (x, y)
-    where x  = idx `mod` (width gen)
-          y  = idx `div` (width gen)
-
-fromCoords :: Generation -> (Int, Int) -> Int
-fromCoords gen (x, y) = x + (y * (width gen))
+makeNextGen :: ViewPort -> Float -> Generation -> Generation
+makeNextGen _ _ gen = nextGeneration gen
 
 pictureGeneration :: Generation -> Picture
 pictureGeneration gen   = Translate tx ty
                         $ Scale (cellWidth gen) (cellWidth gen)
-                        $ Pictures (V.toList (V.imap (pictureCell gen) (board gen)))
+                        $ Pictures (V.toList (V.imap (pictureCell gen) (G.convert (board gen) :: V.Vector Int)))
     where tx = 0 - (((cellWidth gen) * w) / 2)
           ty = 0 - (((cellWidth gen) * h) / 2)
           w  = (fromIntegral (width gen) :: Float)
@@ -75,22 +60,3 @@ pictureCell gen idx state  = Translate (fromIntegral x :: Float) (fromIntegral y
           stateColor 1 = makeColor 0 0 0 1
           stateColor _ = makeColor 0 0 0 0
 
-nextGeneration :: ViewPort -> Float -> Generation -> Generation
-nextGeneration _ _ gen@(Generation w h cw gps bord) = 
-        Generation w h cw gps (V.imap (nextCell gen) bord)
-
-nextCell :: Generation -> Int -> Int -> Int
-nextCell gen idx state | nc < 2 || nc > 3   = 0
-                       | nc == 3            = 1
-                       | otherwise          = state
-    where (x, y)        = getCoords gen idx
-          nc            = L.sum [ (gn neg neg) , (gn zro neg)   , (gn pos neg)
-                                , (gn neg zro) , (0)            , (gn pos zro)
-                                , (gn neg pos) , (gn zro pos)   , (gn pos pos) ]
-          gn mx my      | midx < 0                          = 0
-                        | midx >= (V.length (board gen))    = 0
-                        | otherwise                         = (board gen) V.! midx
-                where midx = fromCoords gen (x + mx, y + my)
-          neg           = (-1)
-          pos           = (1)
-          zro           = (0)
