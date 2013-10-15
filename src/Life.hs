@@ -16,11 +16,11 @@ import           System.Random
 import           Data.Vector.Unboxed                as U
 
 type Board = U.Vector Int
-data Generation = Generation { width     :: Int
-                             , height    :: Int
-                             , cellWidth :: Float
-                             , genPerSec :: Int
-                             , board     :: Board }
+data Generation = Generation { width     :: !Int
+                             , height    :: !Int
+                             , cellWidth :: !Float
+                             , genPerSec :: !Int
+                             , board     :: !Board }
 
 randomBoard :: Int -> Int -> StdGen -> Board
 randomBoard w h = U.take (w * h) . U.unfoldr (Just . randomR (0, 1))
@@ -52,6 +52,6 @@ nextCell gen idx state | nc < 2 || nc > 3   = 0
                         | midx >= (U.length (board gen))    = 0
                         | otherwise                         = (board gen) U.! midx
                 where !midx = fromCoords gen (x + mx, y + my)
-          neg           = (-1)
-          pos           = (1)
-          zro           = (0)
+          !neg          = (-1)
+          !pos          = (1)
+          !zro          = (0)

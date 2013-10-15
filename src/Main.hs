@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE BangPatterns #-}
 
 import           Prelude                                as P
 import           Life
@@ -8,8 +9,8 @@ import           System.Random
 import           System.Console.CmdArgs
 import           Data.Text                              ()
 import           Data.Text.IO                           ()
-import           Data.Vector                            as V
-import           Data.Vector.Generic                    as G
+import           Data.List                              as L
+import           Data.Vector.Unboxed                    as U
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 
@@ -40,23 +41,25 @@ makeFirstGen (Life w h cw gps) seed =
         Generation w h (fromIntegral cw :: Float) gps (randomBoard w h seed)
 
 makeNextGen :: ViewPort -> Float -> Generation -> Generation
-makeNextGen _ _ gen = nextGeneration gen
+makeNextGen _ _ !gen = nextGeneration gen
 
 pictureGeneration :: Generation -> Picture
-pictureGeneration gen   = Translate tx ty
+pictureGeneration !gen  = Translate tx ty
                         $ Scale (cellWidth gen) (cellWidth gen)
-                        $ Pictures (V.toList (V.imap (pictureCell gen) (G.convert (board gen) :: V.Vector Int)))
-    where tx = 0 - (((cellWidth gen) * w) / 2)
-          ty = 0 - (((cellWidth gen) * h) / 2)
-          w  = (fromIntegral (width gen) :: Float)
-          h  = (fromIntegral (height gen) :: Float)
+                        $ Pictures pics
+    where (_, pics)   = L.mapAccumL (pictureCell gen) 0 (U.toList $ board gen)
+          !tx         = 0 - (((cellWidth gen) * w) / 2)
+          !ty         = 0 - (((cellWidth gen) * h) / 2)
+          !w          = (fromIntegral (width gen) :: Float)
+          !h          = (fromIntegral (height gen) :: Float)
 
-pictureCell :: Generation -> Int -> Int -> Picture
-pictureCell gen idx state  = Translate (fromIntegral x :: Float) (fromIntegral y :: Float)
-                            $ Color (stateColor state)
-                            $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]
-    where (x, y)  = getCoords gen idx
-          stateColor 0 = makeColor 0.9 0.9 0.9 1
-          stateColor 1 = makeColor 0 0 0 1
-          stateColor _ = makeColor 0 0 0 0
+pictureCell :: Generation -> Int -> Int -> (Int, Picture)
+pictureCell gen !idx !state = (idx + 1, picture) 
+    where (!x, !y)      = getCoords gen idx
+          !picture      = Translate (fromIntegral x :: Float) (fromIntegral y :: Float)
+                        $ Color (stateColor state)
+                        $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)] 
+          stateColor 0  = makeColor 0.9 0.9 0.9 1
+          stateColor 1  = makeColor 0 0 0 1
+          stateColor _  = makeColor 0 0 0 0
 
