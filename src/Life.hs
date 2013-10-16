@@ -1,57 +1,36 @@
 {-# LANGUAGE BangPatterns #-}
 
 module Life
-    ( Board
-    , Generation (..)
+    ( Generation
 
-    , randomBoard
-    , getCoords
-    , fromCoords
-    , countAlive
-    , nextGeneration
-    , nextCell
+    , randomGen
+    , nextGen
     ) where
 
 import           System.Random
-import           Data.Vector.Unboxed                as U
+import           Control.Monad.Identity (runIdentity)
+import           Data.Array.Repa                        as R
+import           Data.Array.Repa.Algorithms.Randomish   as RA
 
-type Board = U.Vector Int
-data Generation = Generation { width     :: !Int
-                             , height    :: !Int
-                             , cellWidth :: !Float
-                             , genPerSec :: !Int
-                             , board     :: !Board }
+type Generation = Array U DIM2 Int
 
-randomBoard :: Int -> Int -> StdGen -> Board
-randomBoard w h = U.take (w * h) . U.unfoldr (Just . randomR (0, 1))
+randomGen :: Int -> Int -> StdGen -> Generation
+randomGen width height gen = randomishIntArray (Z :. width :. height :: DIM2) 0 1 s
+    where (s, _) = (random gen :: (Int, StdGen))
 
-getCoords :: Generation -> Int -> (Int, Int)
-getCoords !gen !idx = (x, y)
-    where !x  = idx `mod` (width gen)
-          !y  = idx `div` (width gen)
+nextGen :: Generation -> Generation
+nextGen lastGen = runIdentity . computeP $ traverse lastGen id (nextCell (extent lastGen))
 
-fromCoords :: Generation -> (Int, Int) -> Int
-fromCoords !gen (!x, !y) = x + (y * (width gen))
-
-countAlive :: Generation -> Int
-countAlive (Generation _ _ _ _ bord) = U.sum bord
-
-nextGeneration :: Generation -> Generation
-nextGeneration gen@(Generation w h cw gps bord) = 
-        Generation w h cw gps (U.imap (nextCell gen) bord)
-
-nextCell :: Generation -> Int -> Int -> Int
-nextCell gen idx state | nc < 2 || nc > 3   = 0
-                       | nc == 3            = 1
-                       | otherwise          = state
-    where (!x, !y)      = getCoords gen idx
-          !nc           =         (gn neg neg) + (gn zro neg)   + (gn pos neg)
-                                + (gn neg zro) + (0)            + (gn pos zro)
-                                + (gn neg pos) + (gn zro pos)   + (gn pos pos)  
-          gn !mx !my    | midx < 0                          = 0
-                        | midx >= (U.length (board gen))    = 0
-                        | otherwise                         = (board gen) U.! midx
-                where !midx = fromCoords gen (x + mx, y + my)
-          !neg          = (-1)
-          !pos          = (1)
-          !zro          = (0)
+nextCell :: DIM2 -> (DIM2 -> Int) -> DIM2 -> Int
+nextCell aSh lkp loc@(Z :. x :. y)  |  nc < 2 || nc > 3  =  0
+                                    |  nc == 3           =  1
+                                    |  otherwise         =  lkp loc
+    where nc        =   (gn n n) + (gn z n) + (gn p n)
+                      + (gn n z) +            (gn p z)
+                      + (gn n p) + (gn z p) + (gn p p)
+          gn mx my | inShape aSh nLoc = lkp nLoc
+                   | otherwise        = 0
+            where nLoc = (Z :. x + mx :. y + my)
+          n        = (-1)
+          p        = (1)
+          z        = (0)
