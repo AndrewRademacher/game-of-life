@@ -9,6 +9,7 @@ import           System.Random
 import           Data.Text                      ()
 import           Data.Text.IO                   as TIO
 import           Data.Text.Format               as TF
+import           Data.Array.Repa
 
 data Profile = Profile { width_       :: Int
                        , height_      :: Int
@@ -17,9 +18,9 @@ data Profile = Profile { width_       :: Int
 
 argsProfile :: Profile
 argsProfile = Profile
-                { width_        =  100  &= help "The number of cells across the game board."
-                , height_       =  100  &= help "The number of cells tall."
-                , generations_  =  200  &= help "The number of generations to calculate." }
+                { width_        =  200  &= help "The number of cells across the game board."
+                , height_       =  200  &= help "The number of cells tall."
+                , generations_  =  100  &= help "The number of generations to calculate." }
 
 main :: IO ()
 main = do
@@ -30,9 +31,8 @@ main = do
         TF.print "Final Alive: {}\n" $ TF.Only finalAlive
 
 makeFirstGen :: Profile -> StdGen -> Generation
-makeFirstGen (Profile w h g) seed =
-        Generation w h 1 1 (randomBoard w h seed)
+makeFirstGen (Profile w h g) seed = randomGen w h seed
 
 simulate :: Int -> Generation -> Int
-simulate 0 gen = countAlive gen
-simulate i gen = simulate (i - 1) (nextGeneration gen)
+simulate 0 = sumAllS 
+simulate i = simulate (i - 1) . nextGen
