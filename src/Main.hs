@@ -7,18 +7,26 @@ import           Prelude                                as P
 import           Life
 import           System.Random
 import           System.Console.CmdArgs
+import           Control.Monad.Identity (runIdentity)
 import           Data.Text                              ()
 import           Data.Text.IO                           ()
-import           Data.List                              as L
-import           Data.Vector.Unboxed                    as U
+import           Data.Array.Repa                        as R
+import           Data.Array.Repa.Repr.Vector
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 
-data Life = Life { width_     :: Int
-                 , height_    :: Int
-                 , cellWidth_ :: Int
-                 , genPerSec_ :: Int }
-            deriving (Show, Data, Typeable)
+data Life = Life 
+          { width_     :: Int
+          , height_    :: Int
+          , cellWidth_ :: Int
+          , genPerSec_ :: Int }
+          deriving (Show, Data, Typeable)
+
+data World = World
+           { board     :: !Generation
+           , width     :: !Int
+           , height    :: !Int
+           , cellWidth :: !Float }
 
 argsLife :: Life
 argsLife = Life { width_         = 50  &= help "The number of cells across the game board."
@@ -30,36 +38,36 @@ main :: IO ()
 main = do
         life <- cmdArgs argsLife
         seed <- newStdGen
-        let firstGen      = makeFirstGen life seed
-            displayWidth  = (cellWidth_ life) * (width_ life)
-            displayHeight = (cellWidth_ life) * (height_ life)
-        simulate (InWindow "Game of Life" (displayWidth, displayHeight) (10, 10))
-            white (genPerSec firstGen) firstGen pictureGeneration makeNextGen
+        let firstWorld = World 
+                       { board     = randomGen (width_ life) (height_ life) seed
+                       , width     = width_ life
+                       , height    = height_ life
+                       , cellWidth = fromIntegral (cellWidth_ life) :: Float }
+            displayW   = (cellWidth_ life) * (width_ life)
+            displayH   = (cellWidth_ life) * (height_ life)
+        simulate (InWindow "Game of Life" (displayW, displayH) (10, 10))
+            white (genPerSec_ life) firstWorld pictureWorld nextWorld
 
-makeFirstGen :: Life -> StdGen -> Generation
-makeFirstGen (Life w h cw gps) seed = 
-        Generation w h (fromIntegral cw :: Float) gps (randomBoard w h seed)
+nextWorld :: ViewPort -> Float -> World -> World
+nextWorld _ _ world = world { board = nextGen (board world) }
 
-makeNextGen :: ViewPort -> Float -> Generation -> Generation
-makeNextGen _ _ !gen = nextGeneration gen
+pictureWorld :: World -> Picture
+pictureWorld world = Translate tx ty
+                   $ Scale (cellWidth world) (cellWidth world)
+                   $ Pictures (R.toList $ picGen (board world))
+    where picGen :: Generation -> Array V DIM2 Picture
+          picGen gen = runIdentity . computeP $ traverse gen id pictureCell
+          tx         = 0 - (((cellWidth world) * w) / 2)
+          ty         = 0 - (((cellWidth world) * h) / 2)
+          w          = fromIntegral (width world) :: Float
+          h          = fromIntegral (height world) :: Float
 
-pictureGeneration :: Generation -> Picture
-pictureGeneration !gen  = Translate tx ty
-                        $ Scale (cellWidth gen) (cellWidth gen)
-                        $ Pictures pics
-    where (_, pics)   = L.mapAccumL (pictureCell gen) 0 (U.toList $ board gen)
-          !tx         = 0 - (((cellWidth gen) * w) / 2)
-          !ty         = 0 - (((cellWidth gen) * h) / 2)
-          !w          = (fromIntegral (width gen) :: Float)
-          !h          = (fromIntegral (height gen) :: Float)
-
-pictureCell :: Generation -> Int -> Int -> (Int, Picture)
-pictureCell gen !idx !state = (idx + 1, picture) 
-    where (!x, !y)      = getCoords gen idx
-          !picture      = Translate (fromIntegral x :: Float) (fromIntegral y :: Float)
-                        $ Color (stateColor state)
-                        $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)] 
+pictureCell :: (DIM2 -> Int) -> DIM2 -> Picture
+pictureCell lkp loc@(Z :. x :. y) = Translate fx fy
+                                  $ Color (stateColor $ lkp loc)
+                                  $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)] 
+    where fx = fromIntegral x :: Float
+          fy = fromIntegral y :: Float
           stateColor 0  = makeColor 0.9 0.9 0.9 1
           stateColor 1  = makeColor 0 0 0 1
           stateColor _  = makeColor 0 0 0 0
-
