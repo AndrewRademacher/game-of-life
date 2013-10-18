@@ -33,5 +33,5 @@ Common flags:
 ```
 
 For example, if you wanted a game of life where the board was 100x100 and the 20 generations occurred every
-second, you would enter `life -w 100 -h 100 -g 20` in the command line.  The cell with modifier allows you 
+second, you would enter `life -w 100 -h 100 -g 20` in the command line.  The cell width modifier allows you 
 to change the scale of each cell in pixels so that you can keep the whole game board on screen.
