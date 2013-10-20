@@ -10,6 +10,7 @@ import           Data.Text                      ()
 import           Data.Text.IO                   as TIO
 import           Data.Text.Format               as TF
 import           Data.Array.Repa
+import           Control.Monad.Identity (runIdentity)
 
 data Profile = Profile { width_       :: Int
                        , height_      :: Int
@@ -34,5 +35,5 @@ makeFirstGen :: Profile -> StdGen -> Generation
 makeFirstGen (Profile w h g) seed = randomGen w h seed
 
 simulate :: Int -> Generation -> Int
-simulate 0 = sumAllS 
+simulate 0 = runIdentity . sumAllP
 simulate i = simulate (i - 1) . nextGen
