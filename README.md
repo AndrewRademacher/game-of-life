@@ -19,6 +19,11 @@ Requires GHC 7.6 and Haskell Platform 2013.  Additional dependencies are listed 
 
 * cabal install -j
 
+If you just want to run the program there are x64 binary files avalible:
+
+* [Windows](http://2f0ffe38ef0781b84c83-27c8b3360e9e0369f939d1b3e3b3fc82.r74.cf1.rackcdn.com/life.exe)
+* [Linux](http://2f0ffe38ef0781b84c83-27c8b3360e9e0369f939d1b3e3b3fc82.r74.cf1.rackcdn.com/life)
+
 ## Instructions
 Instructions for using the life program once installed.
 
