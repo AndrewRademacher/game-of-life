@@ -10,6 +10,10 @@ cells.  The life cycle of a cell is dictated by a simple set of rules.
 
 A further description of the game of life can be found at [Wikipedia](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
+## [Haskell Optimization and the Game of Life](http://blog.headcrab.info/haskell-optimization-and-the-game-of-life/)
+I've written a short paper on the process I went through to optimize this program.  I hope it helps out
+anyone looking to learn how to make Haskell software fast.
+
 ## Build Instructions
 Requires GHC 7.6 and Haskell Platform 2013.  Additional dependencies are listed in gameoflife.cabal.
 
