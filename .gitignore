@@ -1,8 +1,12 @@
+cabal.sandbox.config
+.cabal-sandbox/
 dist/
 bin/
+
 *.swp
 *.hi
 *.o
 *.prof*
+
 src/Profile
 src/Main
