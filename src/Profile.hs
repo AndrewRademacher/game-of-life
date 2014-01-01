@@ -7,7 +7,6 @@ import           Life
 import           System.Console.CmdArgs
 import           System.Random
 import           Data.Text                      ()
-import           Data.Text.IO                   as TIO
 import           Data.Text.Format               as TF
 import           Data.Array.Repa
 import           Control.Monad.Identity (runIdentity)
