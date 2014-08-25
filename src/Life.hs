@@ -8,19 +8,21 @@ module Life
     , nextGen
     ) where
 
-import           Control.Monad.Identity               (runIdentity)
-import           Data.Array.Repa                      as R
-import           Data.Array.Repa.Algorithms.Randomish as RA
+import           Control.Monad.Identity (runIdentity)
+import           Data.Array.Repa        as R
+import           Data.Vector.Unboxed    (Vector)
 import           Data.Word
-import           Prelude                              hiding (map)
-import           System.Random
+import           Prelude                hiding (map)
+import           System.Random.MWC
 
 type PreGeneration = Array U DIM2 Int
 type Generation    = Array U DIM2 Word8
 
-randomGen :: Int -> Int -> StdGen -> Generation
-randomGen w h g = runIdentity . computeP $ map fromIntegral $ randomishIntArray (Z :. w :. h :: DIM2) 0 1 s
-    where (s, _) = (random g :: (Int, StdGen))
+randomGen :: Int -> Int -> IO Generation
+randomGen w h = do
+        vs <- withSystemRandom . asGenST $ \gen -> uniformVector gen (w * h)
+        let bs = fromUnboxed (Z :. w :. h :: DIM2) (vs :: Vector Bool)
+        return $ runIdentity . computeP $ map (\a -> if a then 1 else 0) bs
 
 nextGen :: Generation -> Generation
 nextGen !lastGen = runIdentity . computeP $ traverse lastGen id (nextCell (extent lastGen))
