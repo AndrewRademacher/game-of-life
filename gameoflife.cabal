@@ -13,7 +13,7 @@ cabal-version:       >=1.10
 
 flag llvm
     description:    Build with the LLVM interface
-    default:        True
+    default:        False
     manual:         True
 
 executable life
