@@ -2,7 +2,6 @@
 
 module Life
     ( Generation
-    , PreGeneration
 
     , randomGen
     , nextGen
@@ -15,7 +14,6 @@ import           Data.Word
 import           Prelude                hiding (map)
 import           System.Random.MWC
 
-type PreGeneration = Array U DIM2 Int
 type Generation    = Array U DIM2 Word8
 
 randomGen :: Int -> Int -> IO Generation

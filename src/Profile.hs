@@ -32,8 +32,5 @@ makeFirstGen :: Profile -> IO Generation
 makeFirstGen (Profile w h _) = randomGen w h
 
 simulate :: Int -> Generation -> Int
-simulate 0 = runIdentity . sumAllP . toPreGen
+simulate 0 = runIdentity . sumAllP . map fromIntegral
 simulate i = simulate (i - 1) . nextGen
-
-toPreGen :: Generation -> PreGeneration
-toPreGen = runIdentity . computeP . map fromIntegral
