@@ -15,9 +15,10 @@ I've written a short paper on the process I went through to optimize this progra
 anyone looking to learn how to make Haskell software fast.
 
 ## Build Instructions
-Requires GHC 7.6 and Haskell Platform 2013.  Additional dependencies are listed in gameoflife.cabal.
+Requires GHC 7.6, best results with GHC 7.8.  Additional dependencies are listed in gameoflife.cabal.
 
-* cabal install -j
+* `cabal install -j`
+* `cabal configure -f llvm` (Optional, if you have llvm installed)
 
 ## Instructions
 Instructions for using the life program once installed.
