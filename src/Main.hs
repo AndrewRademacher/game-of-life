@@ -7,12 +7,12 @@ import           Data.Array.Repa              as R
 import           Data.Array.Repa.Repr.Vector
 import           Data.Text                    ()
 import           Data.Text.IO                 ()
+import           Data.Word
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 import           Life
 import           Prelude                      as P
 import           System.Console.CmdArgs
-import           System.Random
 
 data Life = Life
           { width_     :: Int
@@ -35,10 +35,10 @@ argsLife = Life { width_         = 50  &= help "The number of cells across the g
 
 main :: IO ()
 main = do
-        life <- cmdArgs argsLife
-        seed <- newStdGen
+        life     <- cmdArgs argsLife
+        firstGen <- randomGen (width_ life) (height_ life)
         let firstWorld = World
-                       { board     = randomGen (width_ life) (height_ life) seed
+                       { board     = firstGen
                        , width     = width_ life
                        , height    = height_ life
                        , cellWidth = fromIntegral (cellWidth_ life) :: Float }
@@ -61,7 +61,7 @@ pictureWorld world = Translate tx ty
           w          = fromIntegral (width world) :: Float
           h          = fromIntegral (height world) :: Float
 
-pictureCell :: (DIM2 -> Int) -> DIM2 -> Picture
+pictureCell :: (DIM2 -> Word8) -> DIM2 -> Picture
 pictureCell lkp loc@(Z :. x :. y) = Translate fx fy
                                   $ Color (stateColor $ lkp loc)
                                   $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]

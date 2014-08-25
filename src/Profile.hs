@@ -7,9 +7,8 @@ import           Data.Array.Repa
 import           Data.Text              ()
 import           Data.Text.Format       as TF
 import           Life
-import           Prelude                as P
+import           Prelude                as P hiding (map)
 import           System.Console.CmdArgs
-import           System.Random
 
 data Profile = Profile { width_       :: Int
                        , height_      :: Int
@@ -24,15 +23,14 @@ argsProfile = Profile
 
 main :: IO ()
 main = do
-        profile <- cmdArgs argsProfile
-        seed <- newStdGen
-        let firstGen   = makeFirstGen profile seed
-            finalAlive = simulate (generations_ profile) firstGen
+        profile  <- cmdArgs argsProfile
+        firstGen <- makeFirstGen profile
+        let finalAlive = simulate (generations_ profile) firstGen
         TF.print "Final Alive: {}\n" $ TF.Only finalAlive
 
-makeFirstGen :: Profile -> StdGen -> Generation
-makeFirstGen (Profile w h g) seed = randomGen w h seed
+makeFirstGen :: Profile -> IO Generation
+makeFirstGen (Profile w h _) = randomGen w h
 
 simulate :: Int -> Generation -> Int
-simulate 0 = runIdentity . sumAllP
+simulate 0 = runIdentity . sumAllP . map fromIntegral
 simulate i = simulate (i - 1) . nextGen
