@@ -32,7 +32,7 @@ executable life
     default-language:   Haskell2010
 
     if flag(llvm)
-        ghc-options:        -Wall -O2 -threaded -with-rtsopts=-N -fllvm
+        ghc-options:        -Wall -O2 -threaded -with-rtsopts=-N -Odph -rtsopts -threaded -fno-liberate-case -funfolding-use-threshold1000 -funfolding-keeness-factor1000 -fllvm -optlo-O3
     else
         ghc-options:        -Wall -O2 -threaded -with-rtsopts=-N
 
@@ -50,6 +50,6 @@ executable profile
     default-language:   Haskell2010
 
     if flag(llvm)
-        ghc-options:        -Wall -O2 -threaded -rtsopts -fllvm
+        ghc-options:        -Wall -O2 -threaded -rtsopts -Odph -rtsopts -threaded -fno-liberate-case -funfolding-use-threshold1000 -funfolding-keeness-factor1000 -fllvm -optlo-O3
     else
         ghc-options:        -Wall -O2 -threaded -rtsopts
