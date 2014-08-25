@@ -19,11 +19,8 @@ type PreGeneration = Array U DIM2 Int
 type Generation    = Array U DIM2 Word8
 
 randomGen :: Int -> Int -> StdGen -> Generation
-randomGen w h g = runIdentity . computeP $ map fromIntegral (randomPreGen w h g)
-
-randomPreGen :: Int -> Int -> StdGen -> PreGeneration
-randomPreGen width height gen = randomishIntArray (Z :. width :. height :: DIM2) 0 1 s
-    where (s, _) = (random gen :: (Int, StdGen))
+randomGen w h g = runIdentity . computeP $ map fromIntegral $ randomishIntArray (Z :. w :. h :: DIM2) 0 1 s
+    where (s, _) = (random g :: (Int, StdGen))
 
 nextGen :: Generation -> Generation
 nextGen !lastGen = runIdentity . computeP $ traverse lastGen id (nextCell (extent lastGen))
