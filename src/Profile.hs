@@ -7,7 +7,7 @@ import           Data.Array.Repa
 import           Data.Text              ()
 import           Data.Text.Format       as TF
 import           Life
-import           Prelude                as P
+import           Prelude                as P hiding (map)
 import           System.Console.CmdArgs
 import           System.Random
 
@@ -34,5 +34,8 @@ makeFirstGen :: Profile -> StdGen -> Generation
 makeFirstGen (Profile w h g) seed = randomGen w h seed
 
 simulate :: Int -> Generation -> Int
-simulate 0 = runIdentity . sumAllP
+simulate 0 = runIdentity . sumAllP . toPreGen
 simulate i = simulate (i - 1) . nextGen
+
+toPreGen :: Generation -> PreGeneration
+toPreGen = runIdentity . computeP . map fromIntegral

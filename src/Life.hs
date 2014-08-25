@@ -2,6 +2,7 @@
 
 module Life
     ( Generation
+    , PreGeneration
 
     , randomGen
     , nextGen
@@ -10,18 +11,24 @@ module Life
 import           Control.Monad.Identity               (runIdentity)
 import           Data.Array.Repa                      as R
 import           Data.Array.Repa.Algorithms.Randomish as RA
+import           Data.Word
+import           Prelude                              hiding (map)
 import           System.Random
 
-type Generation = Array U DIM2 Int
+type PreGeneration = Array U DIM2 Int
+type Generation    = Array U DIM2 Word8
 
 randomGen :: Int -> Int -> StdGen -> Generation
-randomGen width height gen = randomishIntArray (Z :. width :. height :: DIM2) 0 1 s
+randomGen w h g = runIdentity . computeP $ map fromIntegral (randomPreGen w h g)
+
+randomPreGen :: Int -> Int -> StdGen -> PreGeneration
+randomPreGen width height gen = randomishIntArray (Z :. width :. height :: DIM2) 0 1 s
     where (s, _) = (random gen :: (Int, StdGen))
 
 nextGen :: Generation -> Generation
 nextGen !lastGen = runIdentity . computeP $ traverse lastGen id (nextCell (extent lastGen))
 
-nextCell :: DIM2 -> (DIM2 -> Int) -> DIM2 -> Int
+nextCell :: DIM2 -> (DIM2 -> Word8) -> DIM2 -> Word8
 {-# INLINE nextCell #-}
 nextCell !aSh !lkp !loc@(Z :. x :. y) |  nc < 2 || nc > 3  =  0
                                       |  nc == 3           =  1

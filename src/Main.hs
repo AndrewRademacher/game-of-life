@@ -7,6 +7,7 @@ import           Data.Array.Repa              as R
 import           Data.Array.Repa.Repr.Vector
 import           Data.Text                    ()
 import           Data.Text.IO                 ()
+import           Data.Word
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
 import           Life
@@ -61,7 +62,7 @@ pictureWorld world = Translate tx ty
           w          = fromIntegral (width world) :: Float
           h          = fromIntegral (height world) :: Float
 
-pictureCell :: (DIM2 -> Int) -> DIM2 -> Picture
+pictureCell :: (DIM2 -> Word8) -> DIM2 -> Picture
 pictureCell lkp loc@(Z :. x :. y) = Translate fx fy
                                   $ Color (stateColor $ lkp loc)
                                   $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]
