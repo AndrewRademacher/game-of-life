@@ -1,21 +1,20 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE BangPatterns #-}
+{-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE TypeOperators      #-}
 
-import           Prelude                                as P
-import           Life
-import           System.Random
-import           System.Console.CmdArgs
-import           Control.Monad.Identity (runIdentity)
-import           Data.Text                              ()
-import           Data.Text.IO                           ()
-import           Data.Array.Repa                        as R
+import           Control.Monad.Identity       (runIdentity)
+import           Data.Array.Repa              as R
 import           Data.Array.Repa.Repr.Vector
+import           Data.Text                    ()
+import           Data.Text.IO                 ()
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort
+import           Life
+import           Prelude                      as P
+import           System.Console.CmdArgs
+import           System.Random
 
-data Life = Life 
+data Life = Life
           { width_     :: Int
           , height_    :: Int
           , cellWidth_ :: Int
@@ -38,7 +37,7 @@ main :: IO ()
 main = do
         life <- cmdArgs argsLife
         seed <- newStdGen
-        let firstWorld = World 
+        let firstWorld = World
                        { board     = randomGen (width_ life) (height_ life) seed
                        , width     = width_ life
                        , height    = height_ life
@@ -65,7 +64,7 @@ pictureWorld world = Translate tx ty
 pictureCell :: (DIM2 -> Int) -> DIM2 -> Picture
 pictureCell lkp loc@(Z :. x :. y) = Translate fx fy
                                   $ Color (stateColor $ lkp loc)
-                                  $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)] 
+                                  $ Polygon [(0.1, 0.1), (0.1, 0.9), (0.9, 0.9), (0.9, 0.1)]
     where fx = fromIntegral x :: Float
           fy = fromIntegral y :: Float
           stateColor 0  = makeColor 0.9 0.9 0.9 1

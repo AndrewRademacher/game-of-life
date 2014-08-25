@@ -1,15 +1,15 @@
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE TypeOperators      #-}
 
-import           Prelude                        as P
+import           Control.Monad.Identity (runIdentity)
+import           Data.Array.Repa
+import           Data.Text              ()
+import           Data.Text.Format       as TF
 import           Life
+import           Prelude                as P
 import           System.Console.CmdArgs
 import           System.Random
-import           Data.Text                      ()
-import           Data.Text.Format               as TF
-import           Data.Array.Repa
-import           Control.Monad.Identity (runIdentity)
 
 data Profile = Profile { width_       :: Int
                        , height_      :: Int

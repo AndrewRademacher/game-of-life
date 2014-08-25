@@ -7,10 +7,10 @@ module Life
     , nextGen
     ) where
 
+import           Control.Monad.Identity               (runIdentity)
+import           Data.Array.Repa                      as R
+import           Data.Array.Repa.Algorithms.Randomish as RA
 import           System.Random
-import           Control.Monad.Identity (runIdentity)
-import           Data.Array.Repa                        as R
-import           Data.Array.Repa.Algorithms.Randomish   as RA
 
 type Generation = Array U DIM2 Int
 
