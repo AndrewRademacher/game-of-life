@@ -1,8 +1,8 @@
-FROM        darinmorrison/haskell
+FROM andrewrademacher/haskell-base:0.1.0.0
 MAINTAINER  Andrew Rademacher <andrewrademacher@gmail.com>
 
 RUN apt-get update
-RUN apt-get install build-essential freeglut3-dev -y
+RUN apt-get install llvm freeglut3-dev -y
 
 RUN mkdir /src
 ADD . /src

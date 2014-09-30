@@ -1,6 +1,6 @@
 
 name:                gameoflife
-version:             0.3.1.0
+version:             0.4.0.0
 synopsis:            Conway's Game of Life
 homepage:            https://github.com/AndrewRademacher/game-of-life
 license:             MIT
