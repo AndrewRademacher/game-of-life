@@ -5,8 +5,6 @@
 import           Control.Monad.Identity       (runIdentity)
 import           Data.Array.Repa              as R
 import           Data.Array.Repa.Repr.Vector
-import           Data.Text                    ()
-import           Data.Text.IO                 ()
 import           Data.Word
 import           Graphics.Gloss
 import           Graphics.Gloss.Data.ViewPort

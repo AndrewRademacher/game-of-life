@@ -8,5 +8,6 @@ bin/
 *.o
 *.prof*
 
+out
 src/Profile
 src/Main

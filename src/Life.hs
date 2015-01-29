@@ -16,7 +16,7 @@ import           Data.Word
 import           Prelude                      hiding (map)
 import           System.Random.MWC
 
-type Generation    = Array U DIM2 Word8
+type Generation = Array U DIM2 Word8
 
 randomGen :: Int -> Int -> IO Generation
 randomGen w h = do
@@ -31,7 +31,7 @@ nextGen lg = runIdentity . computeP $ R.zipWith nextCell lg ncs
                            1 0 1
                            1 1 1 |]
 
-nextCell :: Word8 -> Word8 -> Word8
+nextCell :: (Ord b, Num b, Num a) => a -> b -> a
 nextCell lc nc | nc < 2 || nc > 3 = 0
                | nc == 3          = 1
                | otherwise        = lc

@@ -1,13 +1,9 @@
 {-# LANGUAGE DeriveDataTypeable #-}
-{-# LANGUAGE OverloadedStrings  #-}
 {-# LANGUAGE TypeOperators      #-}
 
 import           Control.Monad.Identity (runIdentity)
-import           Data.Array.Repa
-import           Data.Text              ()
-import           Data.Text.Format       as TF
+import qualified Data.Array.Repa        as R
 import           Life
-import           Prelude                as P hiding (map)
 import           System.Console.CmdArgs
 
 data Profile = Profile { width_       :: Int
@@ -26,11 +22,11 @@ main = do
         profile  <- cmdArgs argsProfile
         firstGen <- makeFirstGen profile
         let finalAlive = simulate (generations_ profile) firstGen
-        TF.print "Final Alive: {}\n" $ TF.Only finalAlive
+        putStrLn $ "Final Alive: " ++ show finalAlive
 
 makeFirstGen :: Profile -> IO Generation
 makeFirstGen (Profile w h _) = randomGen w h
 
 simulate :: Int -> Generation -> Int
-simulate 0 = runIdentity . sumAllP . map fromIntegral
+simulate 0 = runIdentity . R.sumAllP . R.map fromIntegral
 simulate i = simulate (i - 1) . nextGen
