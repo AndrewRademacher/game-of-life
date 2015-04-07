@@ -19,11 +19,11 @@ flag llvm
 executable life
     main-is:            Main.hs
     other-extensions:   OverloadedStrings, DeriveDataTypeable, TypeOperators
-    build-depends:      base            >= 4.6     && < 4.8
+    build-depends:      base            >= 4.6     && < 4.9
                       , mwc-random      >= 0.13    && < 0.14
                       , cmdargs         >= 0.10    && < 0.11
-                      , repa            >= 3.2     && < 3.4
-                      , gloss           >= 1.8     && < 1.9
+                      , repa            >= 3.2     && < 3.5
+                      , gloss           >= 1.8     && < 1.10
                       , mtl             >= 2.1     && < 2.3
                       , vector          >= 0.10    && < 0.11
     hs-source-dirs:     src
@@ -37,9 +37,9 @@ executable life
 executable profile
     main-is:            Profile.hs
     hs-source-dirs:     src
-    build-depends:      base            >= 4.6     && < 4.8
+    build-depends:      base            >= 4.6     && < 4.9
                     ,   mtl             >= 2.1     && < 2.3
-                    ,   repa            >= 3.2     && < 3.4
+                    ,   repa            >= 3.2     && < 3.5
                     ,   mwc-random      >= 0.13    && < 0.14
                     ,   cmdargs         >= 0.10    && < 0.11
                     ,   vector          >= 0.10    && < 0.11
