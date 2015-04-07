@@ -1,5 +1,6 @@
 boot:: sandbox
 	cabal install --only-dependencies --enable-tests
+	cabal configure -f llvm
 	cabal build
 
 sandbox::
