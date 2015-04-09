@@ -10,7 +10,7 @@ cells.  The life cycle of a cell is dictated by a simple set of rules.
 
 A further description of the game of life can be found at [Wikipedia](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
-## [Haskell Optimization and the Game of Life](http://blog.headcrab.info/haskell-optimization-and-the-game-of-life/)
+## [Haskell Optimization and the Game of Life](http://blog.sharedacumen.com/haskell/2013/10/20/haskell-optimization-and-the-game-of-life/)
 I've written a short paper on the process I went through to optimize this program.  I hope it helps out
 anyone looking to learn how to make Haskell software fast.
 
@@ -25,9 +25,9 @@ Instructions for using the life program once installed.
 
 ```
 The life program
-  
+
 life [OPTIONS]
-  
+
 Common flags:
   -w --width=INT      The number of cells across the game board.
   -h --height=INT     The number of cells tall.
@@ -38,5 +38,5 @@ Common flags:
 ```
 
 For example, if you wanted a game of life where the board was 100x100 and the 20 generations occurred every
-second, you would enter `life -w 100 -h 100 -g 20` in the command line.  The cell width modifier allows you 
+second, you would enter `life -w 100 -h 100 -g 20` in the command line.  The cell width modifier allows you
 to change the scale of each cell in pixels so that you can keep the whole game board on screen.
