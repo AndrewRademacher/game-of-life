@@ -53,7 +53,7 @@ pictureWorld world = Translate tx ty
                    $ Scale (cellWidth world) (cellWidth world)
                    $ Pictures (R.toList $ picGen (board world))
     where picGen :: Generation -> Array V DIM2 Picture
-          picGen gen = runIdentity . computeP $ traverse gen id pictureCell
+          picGen gen = runIdentity . computeP $ R.traverse gen id pictureCell
           tx         = 0 - (((cellWidth world) * w) / 2)
           ty         = 0 - (((cellWidth world) * h) / 2)
           w          = fromIntegral (width world) :: Float
