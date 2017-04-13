@@ -10,7 +10,7 @@ cells.  The life cycle of a cell is dictated by a simple set of rules.
 
 A further description of the game of life can be found at [Wikipedia](http://en.wikipedia.org/wiki/Conway%27s_Game_of_Life).
 
-## [Haskell Optimization and the Game of Life](http://blog.sharedacumen.com/haskell/2013/10/20/haskell-optimization-and-the-game-of-life/)
+## [Haskell Optimization and the Game of Life](https://wheelmaker.io/posts/2013-10-20-haskell-optimization-and-the-game-of-life.html)
 I've written a short paper on the process I went through to optimize this program.  I hope it helps out
 anyone looking to learn how to make Haskell software fast.
 
