@@ -5,7 +5,7 @@ let
   inherit (nixpkgs) pkgs;
 
   f = { mkDerivation, base, cmdargs, gloss, mtl, mwc-random, repa
-      , stdenv, vector
+      , stdenv, vector, mesa_glu
       }:
       mkDerivation {
         pname = "gameoflife";
@@ -14,10 +14,10 @@ let
         isLibrary = true;
         isExecutable = true;
         libraryHaskellDepends = [
-          base cmdargs gloss mtl mwc-random repa vector
+          base cmdargs gloss mtl mwc-random repa vector mesa_glu
         ];
         executableHaskellDepends = [
-          base cmdargs gloss mtl mwc-random repa vector
+          base cmdargs gloss mtl mwc-random repa vector mesa_glu
         ];
         homepage = "https://github.com/AndrewRademacher/game-of-life";
         description = "Conway's Game of Life";
